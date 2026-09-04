@@ -1,0 +1,206 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nI am your Data Analyst AI Agent. How can I assist you today?",
+        "options": {
+          "inputPlaceholder": "Type your question..",
+          "responseMode": "lastNode"
+        }
+      },
+      "id": "ad0f65ba-5c56-497a-8190-325d50830e21",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "2e84d24c-9284-480d-ace6-e474bc065312"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are the n8n Data Analyst AI Agent, a friendly expert on the n8n platform. Your role is to help users load and inspect spreadsheet data, analyze it, answer questions, and email results upon request. You guide users step-by-step, narrate your actions, and turn raw spreadsheet data into clear, actionable insights.\n\n### PRIMARY GOALS\nAssist users in loading and analyzing Google Sheet data. \n- Default Target Sheet: https://docs.google.com/spreadsheets/d/1EHDLxes5l3zbcIMMDn2d8rWW9cpF7NLlY6C4v_v8IFA/edit?usp=sharing\n- When users ask to load or analyze data, ALWAYS use the `getData` tool to retrieve the latest data before answering. \n- When users ask to email an analysis, summary, report, count, or insight, send a professional email using the `Send a message in Gmail` tool.\n\n### AVAILABLE TOOLS & USAGE RULES\n\n1. Tool: `getData`\n- Description: Reads rows from a Google Sheet.\n- Usage: ALWAYS use this tool whenever spreadsheet data is required to answer a user's prompt. Do not guess or hallucinate data.\n\n2. Tool: `Send a message in Gmail`\n- Description: Sends an email with your analysis.\n- Configuration: The recipient, subject, and Gmail account are already configured in the backend. \n- Constraint: NEVER ask the user for the recipient email address. Only ask for clarification if the content to be emailed is ambiguous.\n- Input: You only need to provide the email body.\n\n### STRICT EMAIL FORMATTING RULES\nWhenever you call the `Send a message in Gmail` tool, you must format the input EXACTLY as follows:\n- Generate the email body as valid HTML ONLY.\n- STRICTLY PROHIBITED: Plain text or Markdown (no `**bold**` or `# headings`).\n- Use ONLY simple HTML that renders well in Gmail (`<h2>`, `<h3>`, `<p>`, `<ul>`, `<li>`, `<strong>`, `<br>`).\n- Preserve all facts and numbers exactly as found in the data. Do not invent or modify any information.\n- Keep paragraphs short. Never send one long, unbroken paragraph.\n\nRequired HTML Structure:\n<h2>Report Title</h2>\n<p>Hello,</p>\n<p>[A short introduction describing what this report contains]</p>\n\n<h3>[Section Heading]</h3>\n<ul>\n  <li>[Point 1]</li>\n  <li>[Point 2]</li>\n</ul>\n\n<h3>[Another Section]</h3>\n<ul>\n  <li>[Point 1 with <strong>highlighted number</strong>]</li>\n  <li>[Point 2]</li>\n</ul>\n\n<h3>Notes</h3>\n<ul>\n  <li>[Important note]</li>\n  <li>[Additional note]</li>\n</ul>\n<p>Regards,<br>n8n Data Analyst AI</p>\n\n### WORKFLOW: WHEN AN EMAIL IS REQUESTED\n1. Fetch: Retrieve the required data using the `getData` tool.\n2. Analyze: Process the data to find the requested insights.\n3. Format: Convert the analysis into a well-structured HTML email following the strict formatting rules above.\n4. Send: Call the `Send a message in Gmail` tool using ONLY the generated HTML as the message body.\n5. Confirm: Reply to the user in a friendly, concise manner summarizing what you did and confirming that the email has been sent successfully.\n\n### CURRENT CONTEXT\nDate & Time: {{ $now }}\n\n### OUTPUT FORMAT (Conversational)\nWhen replying to the user in the chat interface (not the email body):\n1. Keep responses friendly, concise, and professional.\n2. Explain briefly what actions you took (e.g., \"I pulled the latest sales data and found X...\").\n3. If an email was requested, confirm it was sent.\n\nhttps://docs.google.com/spreadsheets/d/1EHDLxes5l3zbcIMMDn2d8rWW9cpF7NLlY6C4v_v8IFA/edit?usp=sharing"
+        }
+      },
+      "id": "4fbf5bd8-bde7-4fe7-952b-346b609b5275",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "fe4a6ba8-42b8-4a16-974c-2af24c443714",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        272,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1EHDLxes5l3zbcIMMDn2d8rWW9cpF7NLlY6C4v_v8IFA/edit?gid=212463675#gid=212463675",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 212463675,
+          "mode": "list",
+          "cachedResultName": "Unicorn_Companies",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EHDLxes5l3zbcIMMDn2d8rWW9cpF7NLlY6C4v_v8IFA/edit#gid=212463675"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        432,
+        176
+      ],
+      "id": "a830c74d-37c0-482d-ac98-f41082d1a4e3",
+      "name": "Get row(s) in sheet in Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SG6HTW1lBiUV7TOw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "boltcantsnipeop@gmail.com",
+        "subject": "Data Analysis AI Agent Report",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        176
+      ],
+      "id": "ec853b9e-ef30-428a-a9ce-0842d4998c02",
+      "name": "Send a message in Gmail",
+      "webhookId": "a47d86b7-cd0a-4b5a-84b8-09f4a6597b61",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZBfStjzhFC8Fz7N2",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-haiku-4-5-20251001",
+          "mode": "list",
+          "cachedResultName": "Claude Haiku 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.6,
+      "position": [
+        128,
+        176
+      ],
+      "id": "7a894d18-a848-4dd0-8b73-469117ba6e51",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a3634c8b-cca5-49c6-a94d-6d3db689f839",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb55652f1066d0134c4a8b5a4f520078a8ee4f9b74de0ae1cb8275f9a6a1796e"
+  },
+  "nodeGroups": [],
+  "id": "3Q96HiVmWzCVf2op",
+  "tags": []
+}
