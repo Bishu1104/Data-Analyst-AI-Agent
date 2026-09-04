@@ -1,6 +1,6 @@
 # 🤖 Data Analyst AI Agent
 
-> **An AI-powered data analyst built with n8n, Anthropic Claude, Google Sheets, and Gmail — ask questions in natural language, get data-backed insights, and email professional reports on demand.**
+> **An AI-powered data analyst agent built with n8n, Anthropic Claude, Google Sheets, and Gmail — ask questions in natural language, get data-backed insights, and email professional reports on demand.**
 
 [![n8n](https://img.shields.io/badge/Workflow-n8n-orange?style=for-the-badge)](https://n8n.io/)
 [![Anthropic](https://img.shields.io/badge/LLM-Claude%20Haiku-blueviolet?style=for-the-badge)](https://www.anthropic.com/)
